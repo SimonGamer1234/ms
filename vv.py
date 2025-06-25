@@ -39,12 +39,14 @@ def ge_current_ad_number(AD_TYPE):
         if AD_TYPE == "Normal":
             NormalAd, AviationAd = GetInfoFromFile(filename)
             NormalAd = int(int(NormalAd) + 1)
+            print("Normal Ad: ", NormalAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
                 print("File updated successfully.")
         elif AD_TYPE == "Aviation":
             NormalAd, AviationAd = GetInfoFromFile(filename)
             AviationAd = int(int(AviationAd) + 1)
+            print("Aviation Ad: ", AviationAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
                 print("File updated successfully.")
