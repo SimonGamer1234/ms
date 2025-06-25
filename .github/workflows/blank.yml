@@ -19,7 +19,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           G_TOKEN: ${{ secrets.G_TOKEN }}
           ADS: ${{ vars.NORMAL_ADS }}
-          URLS: ${{ vars.URLS }}
+          URLS: ${{ vars.NORMAL_URLS }}
           AD_TYPE: normal
         run: |
           python3 vv.py

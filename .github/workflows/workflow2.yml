@@ -1,0 +1,32 @@
+name: Posting Aviation
+on:
+  schedule:
+    - cron: "0 0 * * *"     # 00:00
+    - cron: "40 2 * * *"    # 02:40
+    - cron: "20 5 * * *"    # 05:20
+    - cron: "0 8 * * *"     # 08:00
+    - cron: "40 10 * * *"   # 10:40
+    - cron: "20 13 * * *"   # 13:20
+    - cron: "0 16 * * *"    # 16:00
+    - cron: "40 18 * * *"   # 18:40
+    - cron: "20 21 * * *"   # 21:20
+  workflow_dispatch:
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Variable setup
+        env:
+          ACCOUNT1: ${{ secrets.ACCOUNT_3_TOKEN }}
+          ACCOUNT2: ${{ secrets.ACCOUNT_4_TOKEN }}
+          ACCOUNT3: ${{ secrets.ACCOUNT_5_TOKEN }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          G_TOKEN: ${{ secrets.G_TOKEN }}
+          ADS: ${{ vars.AVIATION_ADS }}
+          URLS: ${{ vars.AVIATION_URLS }}
+          AD_TYPE: aviation
+        run: |
+          python3 vv.py
