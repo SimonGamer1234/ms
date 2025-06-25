@@ -20,7 +20,7 @@ jobs:
           G_TOKEN: ${{ secrets.G_TOKEN }}
           ADS: ${{ vars.NORMAL_ADS }}
           URLS: ${{ vars.NORMAL_URLS }}
-          AD_TYPE: normal
+          AD_TYPE: Normal
         run: |
           python3 vv.py
         
