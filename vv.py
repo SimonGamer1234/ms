@@ -21,16 +21,14 @@ def ge_current_ad_number(AD_TYPE):
     def GetInfoFromFile(filename):
         with open(filename, "r") as file:
             content = file.read()
-            NormalAdSplit1 = content.split("\n=divider=\n")[0]
-            AviationAdSplit1 = content.split("\n=divider=\n")[1]
-            NormalAdSplit2 = content.split("\r\n=divider=\r\n")[0]
-            AviationAdSplit2 = content.split("\r\n=divider=\r\n")[1]
-            if len(NormalAdSplit1) > 1:
-                NormalAd = NormalAdSplit1.strip()
-                AviationAd = AviationAdSplit1.strip()
-            elif len(NormalAdSplit2) > 1:
-                NormalAd = NormalAdSplit2.strip()
-                AviationAd = AviationAdSplit2.strip()
+            AdSplit1 = content.split("\n=divider=\n")
+            AdSplit2 = content.split("\r\n=divider=\r\n")
+            if len(AdSplit1) > 1:
+                NormalAd = AdSplit1[0]
+                AviationAd = AdSplit1[1]
+            elif len(AdSplit2) > 1:
+                NormalAd = AdSplit2[0]
+                AviationAd = AdSplit2[1]
             else:
                 NormalAd = "0"
                 AviationAd = "0"
