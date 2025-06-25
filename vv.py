@@ -62,7 +62,7 @@ def ge_current_ad_number(AD_TYPE):
             print("Invalid AD_TYPE. Please choose 'Normal' or 'Aviation'.")
             exit(1)
     AdNumber = GetAd(AD_TYPE)
-    EditFile(FileName, NormalAd + 1, AdNumber + 1)
+    EditFile(FileName)
     return AdNumber
 
 def GetCurrentAd(AdNumber):
