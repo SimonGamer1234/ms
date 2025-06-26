@@ -42,7 +42,10 @@ def ge_current_ad_number(AD_TYPE):
     def EditFile(filename):
         if AD_TYPE == "Normal":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            NormalAd = int(NormalAd) + 1
+            if NormalAd == 12:
+                NormalAd = 0
+            else:
+                NormalAd = int(NormalAd) + 1
             print("Normal Ad: ", NormalAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
@@ -52,7 +55,10 @@ def ge_current_ad_number(AD_TYPE):
             print(f"Updated Aviation Ad: {AviationAd}")
         elif AD_TYPE == "Aviation":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            AviationAd = int(AviationAd) + 1
+            if AviationAd == 9:
+                AviationAd = 0
+            else:
+                AviationAd = int(AviationAd) + 1
             print("Aviation Ad: ", AviationAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
