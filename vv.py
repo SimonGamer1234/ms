@@ -20,14 +20,16 @@ FileName = "tracker.txt"
 def ge_current_ad_number(AD_TYPE):
     def GetInfoFromFile(filename):
         with open(filename, "r") as file:
-            content = file.read()
+            content = str(file.read())
             print(f"Content of {filename}: {content}")
             AdSplit1 = content.split("\n=divider=\n")
             AdSplit2 = content.split("\r\n=divider=\r\n")
             if len(AdSplit1) > 1:
+                print("First")
                 NormalAd = AdSplit1[0]
                 AviationAd = AdSplit1[1]
             elif len(AdSplit2) > 1:
+                print("Second")
                 NormalAd = AdSplit2[0]
                 AviationAd = AdSplit2[1]
             else:
