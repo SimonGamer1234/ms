@@ -6,6 +6,10 @@ on:
 
 jobs:
   post:
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

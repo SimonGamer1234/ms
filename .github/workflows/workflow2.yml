@@ -11,9 +11,15 @@ on:
     - cron: "40 18 * * *"   # 18:40
     - cron: "20 21 * * *"   # 21:20
   workflow_dispatch:
+  
+
 
 jobs:
   post:
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -44,6 +50,7 @@ jobs:
           python3 vv.py
 
       - name: Commit Updated Tracker
+        
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
