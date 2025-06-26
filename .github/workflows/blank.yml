@@ -43,4 +43,4 @@ jobs:
           git commit -m "Update tracker count [skip ci]" || echo "No changes to commit"
       - name: Push tracker file
         run: |
-          git push https://x-access-token:${{ secrets.G_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:${{ github.ref_name }}
