@@ -1,4 +1,4 @@
-name: Posting Aviation
+name: Posting Normal
 on:
   schedule:
     - cron: "0 0 * * *"     # 00:00
@@ -11,6 +11,7 @@ on:
     - cron: "40 18 * * *"   # 18:40
     - cron: "20 21 * * *"   # 21:20
   workflow_dispatch:
+
 jobs:
   post:
     runs-on: ubuntu-latest
@@ -18,15 +19,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Variable setup
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies (if needed)
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run ad posting script
         env:
-          ACCOUNT1: ${{ secrets.ACCOUNT_3_TOKEN }}
-          ACCOUNT2: ${{ secrets.ACCOUNT_4_TOKEN }}
-          ACCOUNT3: ${{ secrets.ACCOUNT_5_TOKEN }}
+          ACCOUNT1: ${{ secrets.ACCOUNT_1_TOKEN }}
+          ACCOUNT2: ${{ secrets.ACCOUNT_2_TOKEN }}
+          ACCOUNT3: ${{ secrets.ACCOUNT_3_TOKEN }}
+          ACCOUNT4: ${{ secrets.ACCOUNT_4_TOKEN }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           G_TOKEN: ${{ secrets.G_TOKEN }}
-          ADS: ${{ vars.AVIATION_ADS }}
-          URLS: ${{ vars.AVIATION_URLS }}
-          AD_TYPE: Aviation
+          ADS: ${{ vars.NORMAL_ADS }}
+          URLS: ${{ vars.NORMAL_URLS }}
+          AD_TYPE: Normal
         run: |
           python3 vv.py
+
+      - name: Commit tracker update
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add tracker.txt
+          git commit -m "Update tracker count [skip ci]" || echo "No changes to commit"
+      - name: Push tracker file
+        run: |
+          git push https://x-access-token:${{ secrets.G_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main

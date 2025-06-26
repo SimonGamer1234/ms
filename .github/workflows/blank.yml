@@ -3,6 +3,7 @@ on:
   schedule:
     - cron: '0 */2 * * *' # Every 2 hours
   workflow_dispatch:
+
 jobs:
   post:
     runs-on: ubuntu-latest
@@ -10,7 +11,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Variable setup
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies (if needed)
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run ad posting script
         env:
           ACCOUNT1: ${{ secrets.ACCOUNT_1_TOKEN }}
           ACCOUNT2: ${{ secrets.ACCOUNT_2_TOKEN }}
@@ -23,4 +34,13 @@ jobs:
           AD_TYPE: Normal
         run: |
           python3 vv.py
-        
+
+      - name: Commit tracker update
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add tracker.txt
+          git commit -m "Update tracker count [skip ci]" || echo "No changes to commit"
+      - name: Push tracker file
+        run: |
+          git push https://x-access-token:${{ secrets.G_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
