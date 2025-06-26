@@ -21,6 +21,7 @@ def ge_current_ad_number(AD_TYPE):
     def GetInfoFromFile(filename):
         with open(filename, "r") as file:
             content = file.read()
+            print(f"Content of {filename}: {content}")
             AdSplit1 = content.split("\n=divider=\n")
             AdSplit2 = content.split("\r\n=divider=\r\n")
             if len(AdSplit1) > 1:
@@ -30,6 +31,7 @@ def ge_current_ad_number(AD_TYPE):
                 NormalAd = AdSplit2[0]
                 AviationAd = AdSplit2[1]
             else:
+                print("Error: No ads found in the file.")
                 NormalAd = "0"
                 AviationAd = "0"
             print(f"Normal Ad: {NormalAd}")
@@ -38,14 +40,14 @@ def ge_current_ad_number(AD_TYPE):
     def EditFile(filename):
         if AD_TYPE == "Normal":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            NormalAd = int(int(NormalAd) + 1)
+            NormalAd = int(NormalAd) + 1
             print("Normal Ad: ", NormalAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
                 print("File updated successfully.")
         elif AD_TYPE == "Aviation":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            AviationAd = int(int(AviationAd) + 1)
+            AviationAd = int(AviationAd) + 1
             print("Aviation Ad: ", AviationAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
