@@ -15,7 +15,9 @@ ADS = os.getenv("ADS")
 URLS = os.getenv("URLS").split(",")
 AD_TYPE = os.getenv("AD_TYPE")
 FileName = "tracker.txt"
-
+REPOSITORY = os.getenv("GITHUB_REPOSITORY")
+REPO_OWNER, REPO_NAME = REPOSITORY.split("/")
+BaseVariable = "Paadvertising"
 
 def ge_current_ad_number(AD_TYPE):
     def GetInfoFromFile(filename):
@@ -42,7 +44,7 @@ def ge_current_ad_number(AD_TYPE):
     def EditFile(filename):
         if AD_TYPE == "Normal":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            if NormalAd == 12:
+            if NormalAd == 11:
                 NormalAd = 0
             else:
                 NormalAd = int(NormalAd) + 1
@@ -55,7 +57,7 @@ def ge_current_ad_number(AD_TYPE):
             print(f"Updated Aviation Ad: {AviationAd}")
         elif AD_TYPE == "Aviation":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            if AviationAd == 9:
+            if AviationAd == 8:
                 AviationAd = 0
             else:
                 AviationAd = int(AviationAd) + 1
@@ -87,9 +89,9 @@ def GetCurrentAd(AdNumber):
   SplittedAds1 = ADS.split("\n\n++SPLITTER++\n\n")
   SplittedAds2 = ADS.split("\r\n\r\n++SPLITTER++\r\n")
   if len(SplittedAds1) > 1:
-      return SplittedAds1[AdNumber]
+      return SplittedAds1, SplittedAds1[AdNumber]
   elif len(SplittedAds2) > 1:
-      return SplittedAds2[AdNumber]
+      return SplittedAds2, SplittedAds2[AdNumber]
   else:
       print("Error: No ads found in the provided string.")
   
@@ -109,21 +111,83 @@ def SetContent(Ad):
     if len(SplittedAd1) > 1:
         Content = SplittedAd1[0]
         TotalPosts = SplittedAd1[1]
-        DaysLeft = SplittedAd1[2]
+        PostingsLeft = SplittedAd1[2]
         Keywords = SplittedAd1[3]
         ChannelID = SplittedAd1[4]
     elif len(SplittedAd2) > 1:
         Content = SplittedAd2[0]
         TotalPosts = SplittedAd2[1]
-        DaysLeft = SplittedAd2[2]
+        PostingsLeft = SplittedAd2[2]
         Keywords = SplittedAd2[3]
         ChannelID = SplittedAd2[4]
     else:
         print("Error: No ad content found in the provided string.")
-    return Content, TotalPosts, DaysLeft, Keywords, ChannelID
+    return Content, TotalPosts, PostingsLeft, Keywords, ChannelID
 
-    
+def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds):
 
+    def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
+        SplittedAds[AdNumber] = Ad
+        NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
+        url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/variables/{VariableName}"
+        headers = {
+        "Authorization": f"Bearer {G_TOKEN}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+        }
+
+        payload = {
+            "value": NewVariable
+        }
+
+        response = requests.patch(url, headers=headers, json=payload)
+
+        # Results
+        if response.status_code == 204:
+            print("✅ Variable updated successfully.")
+        elif response.status_code == 404:
+            print("❌ Variable not found. You may need to create it first.")
+            print(response.text)
+        else:
+            print(f"❌ Failed to update variable. Status code: {response.status_code}")
+            print(response.text)
+
+            
+    NewPostingsLeft = int(PostingsLeft) - 1
+    if NewPostingsLeft < 0:
+        Variable = f"{Content}\n=divider=\n{TotalPosts}\n=divider=\n{NewPostingsLeft}\n=divider=\n{Keywords}\n=divider=\n{ChannelID}"
+        UpdateAdVariable(SplittedAds, "ADS", AdNumber, Variable)
+    elif NewPostingsLeft == 0:
+        Variable = BaseVariable
+        UpdateAdVariable(SplittedAds, "ADS", AdNumber, Variable)
+
+
+def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
+    SplittedAds[AdNumber] = Ad
+    NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
+    url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/variables/{VariableName}"
+    headers = {
+    "Authorization": f"Bearer {G_TOKEN}",
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+    }
+
+    payload = {
+        "value": NewVariable
+    }
+
+    response = requests.patch(url, headers=headers, json=payload)
+
+    # Results
+    if response.status_code == 204:
+        print("✅ Variable updated successfully.")
+    elif response.status_code == 404:
+        print("❌ Variable not found. You may need to create it first.")
+        print(response.text)
+    else:
+        print(f"❌ Failed to update variable. Status code: {response.status_code}")
+        print(response.text)
+        
 def SendMessageFromAccount(Token, ChannelID, Content):
     Errors = []
     token_index = [TOKEN1, TOKEN2, TOKEN3, TOKEN4].index(Token)
@@ -188,10 +252,11 @@ def ReportTicket(TicketID, unauthorized):
 
 def main():
     AdNumber = ge_current_ad_number(AD_TYPE)
-    CurrentAd = GetCurrentAd(AdNumber)
+    SplittedAds, CurrentAd = GetCurrentAd(AdNumber)
     Token = GetToken(AdNumber)
-    Content, TotalPosts, DaysLeft, Keywords, ChannelID = SetContent(CurrentAd)
+    Content, TotalPosts, PostingsLeft, Keywords, ChannelID = SetContent(CurrentAd)
     unauthorized, Errors = Posting(URLS, Content, Token)
+    EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds)
     MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
     ReportTicketStatus = ReportTicket(ChannelID, unauthorized)
     if MessageStatus == 200 and ReportTicketStatus == 200:
