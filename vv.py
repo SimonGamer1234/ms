@@ -17,6 +17,7 @@ AD_TYPE = os.getenv("AD_TYPE")
 FileName = "tracker.txt"
 REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 REPO_OWNER, REPO_NAME = REPOSITORY.split("/")
+print(f"REPO_OWNER: {REPO_OWNER}, REPO_NAME: {REPO_NAME}")
 BaseVariable = "Paadvertising"
 
 def GetVariableName(AD_TYPE):
