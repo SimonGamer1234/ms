@@ -19,6 +19,15 @@ REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 REPO_OWNER, REPO_NAME = REPOSITORY.split("/")
 BaseVariable = "Paadvertising"
 
+def GetVariableName(AD_TYPE):
+    if AD_TYPE == "Normal":
+        return "NORMAL_ADS"
+    elif AD_TYPE == "Aviation":
+        return "AVIATION_ADS"
+    else:
+        print("Invalid AD_TYPE. Please choose 'Normal' or 'Aviation'.")
+        exit(1)
+
 def ge_current_ad_number(AD_TYPE):
     def GetInfoFromFile(filename):
         with open(filename, "r") as file:
@@ -110,7 +119,7 @@ def SetContent(Ad):
         print("Error: No ad content found in the provided string.")
     return Content, TotalPosts, PostingsLeft, Keywords, ChannelID
 
-def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds):
+def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName):
 
     def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
         SplittedAds[AdNumber] = Ad
@@ -238,12 +247,13 @@ def ReportTicket(TicketID, unauthorized):
     
 
 def main():
+    VariableName = GetVariableName(AD_TYPE)
     AdNumber = ge_current_ad_number(AD_TYPE)
     SplittedAds, CurrentAd = GetCurrentAd(AdNumber)
     Token = GetToken(AdNumber)
     Content, TotalPosts, PostingsLeft, Keywords, ChannelID = SetContent(CurrentAd)
     unauthorized, Errors = Posting(URLS, Content, Token)
-    EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds)
+    EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
     MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
     ReportTicketStatus = ReportTicket(ChannelID, unauthorized)
     if MessageStatus == 200 and ReportTicketStatus == 200:
