@@ -44,7 +44,7 @@ def ge_current_ad_number(AD_TYPE):
     def EditFile(filename):
         if AD_TYPE == "Normal":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            if NormalAd == 11:
+            if int(NormalAd) == 11:
                 NormalAd = 0
             else:
                 NormalAd = int(NormalAd) + 1
@@ -57,7 +57,7 @@ def ge_current_ad_number(AD_TYPE):
             print(f"Updated Aviation Ad: {AviationAd}")
         elif AD_TYPE == "Aviation":
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            if AviationAd == 8:
+            if int(AviationAd) == 8:
                 AviationAd = 0
             else:
                 AviationAd = int(AviationAd) + 1
