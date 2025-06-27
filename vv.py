@@ -138,6 +138,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
         response = requests.patch(url, headers=headers, json=payload)
 
         # Results
+        print(response.text)
         if response.status_code == 204:
             print("✅ Variable updated successfully.")
         elif response.status_code == 404:
