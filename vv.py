@@ -126,6 +126,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
         SplittedAds[AdNumber] = Ad
         NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/variables/{VariableName}"
+        print(url)
         headers = {
         "Authorization": f"Bearer {G_TOKEN}",
         "Accept": "application/vnd.github+json",
