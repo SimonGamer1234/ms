@@ -155,10 +155,10 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
     print(f"New Postings Left: {NewPostingsLeft}")
     if  NewPostingsLeft > 0:
         Variable = f"{Content}\n=divider=\n{TotalPosts}\n=divider=\n{NewPostingsLeft}\n=divider=\n{Keywords}\n=divider=\n{ChannelID}"
-        UpdateAdVariable(SplittedAds, "ADS", AdNumber, Variable)
+        UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
     elif NewPostingsLeft == 0:
         Variable = BaseVariable
-        UpdateAdVariable(SplittedAds, "ADS", AdNumber, Variable)
+        UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
 
 
 def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
