@@ -48,26 +48,18 @@ def ge_current_ad_number(AD_TYPE):
                 NormalAd = 0
             else:
                 NormalAd = int(NormalAd) + 1
-            print("Normal Ad: ", NormalAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
-                print("File updated successfully.")
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            print(f"Updated Normal Ad: {NormalAd}")
-            print(f"Updated Aviation Ad: {AviationAd}")
         elif AD_TYPE == "Aviation":
             NormalAd, AviationAd = GetInfoFromFile(filename)
             if int(AviationAd) == 8:
                 AviationAd = 0
             else:
                 AviationAd = int(AviationAd) + 1
-            print("Aviation Ad: ", AviationAd)
             with open(filename, "w") as file:
                 file.write(f"{NormalAd}\n=divider=\n{AviationAd}")
-                print("File updated successfully.")
             NormalAd, AviationAd = GetInfoFromFile(filename)
-            print(f"Updated Normal Ad: {NormalAd}")
-            print(f"Updated Aviation Ad: {AviationAd}")
         else:
             print("Invalid AD_TYPE. Please choose 'Normal' or 'Aviation'.")
             exit(1)
@@ -154,7 +146,8 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
 
             
     NewPostingsLeft = int(PostingsLeft) - 1
-    if NewPostingsLeft < 0:
+    print(f"New Postings Left: {NewPostingsLeft}")
+    if  NewPostingsLeft < 0:
         Variable = f"{Content}\n=divider=\n{TotalPosts}\n=divider=\n{NewPostingsLeft}\n=divider=\n{Keywords}\n=divider=\n{ChannelID}"
         UpdateAdVariable(SplittedAds, "ADS", AdNumber, Variable)
     elif NewPostingsLeft == 0:
