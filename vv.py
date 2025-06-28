@@ -83,7 +83,7 @@ def ge_current_ad_number(AD_TYPE):
 
 def GetCurrentAd(AdNumber):
   SplittedAds1 = ADS.split("\n\n++SPLITTER++\n\n")
-  SplittedAds2 = ADS.split("\r\n\r\n++SPLITTER++\r\n")
+  SplittedAds2 = ADS.split("\r\n\r\n++SPLITTER++\r\n\r\n")
   if len(SplittedAds1) > 1:
       return SplittedAds1, SplittedAds1[AdNumber]
   elif len(SplittedAds2) > 1:
@@ -105,21 +105,22 @@ def SetContent(Ad):
     SplittedAd1 = Ad.split("\n=divider=\n")
     SplittedAd2 = Ad.split("\r\n=divider=\r\n")
     if len(SplittedAd1) > 1:
-        Content = SplittedAd1[0]
-        TotalPosts = SplittedAd1[1]
-        PostingsLeft = SplittedAd1[2]
-        Keywords = SplittedAd1[3]
-        ChannelID = SplittedAd1[4]
+        content = SplittedAd1[0]
+        variation = SplittedAd1[1]
+        total_posts = SplittedAd1[2]
+        postings = SplittedAd1[3]
+        keywords = SplittedAd1[4]
+        channel_ID = SplittedAd1[5]
     elif len(SplittedAd2) > 1:
-        Content = SplittedAd2[0]
-        TotalPosts = SplittedAd2[1]
-        PostingsLeft = SplittedAd2[2]
-        Keywords = SplittedAd2[3]
-        ChannelID = SplittedAd2[4]
+        content = SplittedAd2[0]
+        variations = SplittedAd2[1]
+        total_posts = SplittedAd2[2]
+        postings = SplittedAd2[3]
+        keywords = SplittedAd2[4]
+        channel_ID = SplittedAd2[5]
     else:
         print("Error: No ad content found in the provided string.")
-    return Content, TotalPosts, PostingsLeft, Keywords, ChannelID
-
+    return content, variation, total_posts, postings, keywords, channel_ID
 def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName):
 
     def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
@@ -239,12 +240,26 @@ def ReportMainChannel(unauthorized, Content, Errors, Token):
     MessageStatus = SendMessageFromBot(BOT_TOKEN, "1300080115945836696", ReportContent)
     return MessageStatus
     
+def SetVauesByVariation(Variation):
+    if Variation == "Free":
+        Postings = 9
+    elif Variation == "Basic":
+        Postings = 14
+    elif Variation == "Advanced":
+        Postings = 21
+    elif Variation == "Pro":
+        Postings = 28
+    elif Variation == "God's": 
+        Postings = 42
+    else:
+        print("Something went wrong with Variation")    
+    return Postings
 
-def ReportTicket(TicketID, unauthorized):
+def ReportTicket(TicketID, unauthorized, PostingsTotal, PostingsLeft):
     if unauthorized == 1:
         ReportContent = f"There was a porblem with the ad posting. The Owner has been notified. He will provide more info <@1148657062599983237>"
     else:
-        ReportContent = f"We have posted your ad. The posting was successful."
+        ReportContent = f"We have posted your ad. The posting was successful.{PostingsLeft} / {PostingsTotal}"
     MessageStatus = SendMessageFromBot(BOT_TOKEN, TicketID, ReportContent)
     return MessageStatus
     
@@ -254,11 +269,12 @@ def main():
     AdNumber = ge_current_ad_number(AD_TYPE)
     SplittedAds, CurrentAd = GetCurrentAd(AdNumber)
     Token = GetToken(AdNumber)
-    Content, TotalPosts, PostingsLeft, Keywords, ChannelID = SetContent(CurrentAd)
+    Content, Variation, TotalPosts, PostingsLeft, Keywords, ChannelID = SetContent(CurrentAd)
     unauthorized, Errors = Posting(URLS, Content, Token)
     EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
+    Postings = SetVauesByVariation(Variation, TotalPosts)
     MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
-    ReportTicketStatus = ReportTicket(ChannelID, unauthorized)
+    ReportTicketStatus = ReportTicket(ChannelID, unauthorized, Postings, PostingsLeft)
     if MessageStatus == 200 and ReportTicketStatus == 200:
         print("All messages posted successfully.")
     else:
