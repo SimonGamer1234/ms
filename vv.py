@@ -192,12 +192,18 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
                 SplittedAds[SplittedAds.index(ad)] = ad1
         Variable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         return Variable
+    def SendReport(ChannelID):
+        Text = "We finished posting your ad. <@1148657062599983237>"
+        Response = SendMessageFromBot(BOT_TOKEN, ChannelID, Text)
+        return Response
     NewPostingsLeft = int(PostingsLeft) - 1
     if  NewPostingsLeft > 0:
         Variable = EditAllPostings(SplittedAds, NewPostingsLeft, Keywords)
         UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
     elif NewPostingsLeft == 0:
         Variable = RemoveAds(SplittedAds, Keywords)
+        response = SendReport(ChannelID)
+        print(response)
         UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
 
 
