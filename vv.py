@@ -299,7 +299,7 @@ def main():
     unauthorized, Errors = Posting(URLS, Content, Token)
     if Variation == "Base_Variable":
         MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
-        ReportTicketStatus = ReportTicket(1387532585462272120, unauthorized, "Base", "Base")
+        ReportTicketStatus = ReportTicket(0, 1387532585462272120, unauthorized, "Base", "Base")
     else:
         Removed = EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
         Postings = SetVauesByVariation(Variation)
