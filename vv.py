@@ -113,7 +113,7 @@ def SetContent(Ad):
         channel_ID = SplittedAd1[5]
     elif len(SplittedAd2) > 1:
         content = SplittedAd2[0]
-        variations = SplittedAd2[1]
+        variation = SplittedAd2[1]
         total_posts = SplittedAd2[2]
         postings = SplittedAd2[3]
         keywords = SplittedAd2[4]
