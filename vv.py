@@ -188,7 +188,8 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
                 print("Error: No ad content found in the provided string.")
                 exit(1)
             if ad_parts[4] == Keywords:
-                ad = BASE_VARIABLE
+                ad1 = BASE_VARIABLE
+                SplittedAds[SplittedAds.index(ad)] = ad1
         Variable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         return Variable
     NewPostingsLeft = int(PostingsLeft) - 1
