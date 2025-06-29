@@ -150,7 +150,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
             print(f"❌ Failed to update variable. Status code: {response.status_code}")
             print(response.text)
 
-    def EditAllPostings(SplittedAds, PostingsLeft, Keywords):
+    def EditAllPostings(SplittedAds, LocalPostingsLeft, Keywords):
         for ad in SplittedAds:
             ad_parts1 = ad.split("\n=divider=\n")
             ad_parts2 = ad.split("\r\n=divider=\r\n")
@@ -164,7 +164,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
             Keywords2 = ad_parts[4]
             if Keywords == Keywords2:
                 print(f"Editing ad: {ad_parts[0]}")
-                ad_parts[3] = str(PostingsLeft)
+                ad_parts[3] = str(LocalPostingsLeft)
                 ad = "\n=divider=\n".join(ad_parts)
             else:
                 print(f"Skipping ad: {ad_parts[0]} as it does not match the keywords.")
