@@ -198,13 +198,15 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
         return Response
     NewPostingsLeft = int(PostingsLeft) - 1
     if  NewPostingsLeft > 0:
+        Removed = 0
         Variable = EditAllPostings(SplittedAds, NewPostingsLeft, Keywords)
         UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
+        return Removed
     elif NewPostingsLeft == 0:
         Variable = RemoveAds(SplittedAds, Keywords)
-        response = SendReport(ChannelID)
-        print(response)
+        Removed = 1      
         UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
+        return Removed
 
 
 
@@ -276,10 +278,12 @@ def SetVauesByVariation(Variation):
         print("Something went wrong with Variation")    
     return Postings
 
-def ReportTicket(TicketID, unauthorized, PostingsTotal, PostingsLeft):
+def ReportTicket(Removed, TicketID, unauthorized, PostingsTotal, PostingsLeft):
     if unauthorized == 1:
         ReportContent = f"There was a porblem with the ad posting. The Owner has been notified. He will provide more info <@1148657062599983237>"
     else:
+        if Removed == 1:
+            ReportContent = "We have finished posting your ad. <@1148657062599983237>"
         ReportContent = f"We have posted your ad. The posting was successful.  {PostingsLeft} / {PostingsTotal}"
     MessageStatus = SendMessageFromBot(BOT_TOKEN, TicketID, ReportContent)
     return MessageStatus
@@ -296,10 +300,10 @@ def main():
         MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
         ReportTicketStatus = ReportTicket(1387532585462272120, unauthorized, "Base", "Base")
     else:
-        EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
+        Removed = EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
         Postings = SetVauesByVariation(Variation)
         MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
-        ReportTicketStatus = ReportTicket(ChannelID, unauthorized, Postings, PostingsLeft)
+        ReportTicketStatus = ReportTicket(Removed, ChannelID, unauthorized, Postings, PostingsLeft)
     if MessageStatus == 200 and ReportTicketStatus == 200:
         print("All messages posted successfully.")
     else:
