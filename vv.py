@@ -151,6 +151,9 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
             print(response.text)
 
     def EditAllPostings(SplittedAds, LocalPostingsLeft, Keywords):
+        print(f"Editing all postings with {LocalPostingsLeft} left for keywords: {Keywords}")
+        print(f"Total ads to edit: {len(SplittedAds)}")
+        print(SplittedAds)
         for ad in SplittedAds:
             ad_parts1 = ad.split("\n=divider=\n")
             ad_parts2 = ad.split("\r\n=divider=\r\n")
