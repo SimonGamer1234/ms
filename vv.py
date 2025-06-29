@@ -272,7 +272,7 @@ def main():
     Content, Variation, TotalPosts, PostingsLeft, Keywords, ChannelID = SetContent(CurrentAd)
     unauthorized, Errors = Posting(URLS, Content, Token)
     EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
-    Postings = SetVauesByVariation(Variation, TotalPosts)
+    Postings = SetVauesByVariation(Variation)
     MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
     ReportTicketStatus = ReportTicket(ChannelID, unauthorized, Postings, PostingsLeft)
     if MessageStatus == 200 and ReportTicketStatus == 200:
