@@ -124,6 +124,7 @@ def SetContent(Ad):
 def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName):
 
     def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
+        print(f"Updating variable {Ad}")
         url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/variables/{VariableName}"
         print(url)
         headers = {
@@ -162,9 +163,11 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
                 exit(1)
             Keywords2 = ad_parts[4]
             if Keywords == Keywords2:
+                print(f"Editing ad: {ad_parts[0]}")
                 ad_parts[3] = str(PostingsLeft)
                 ad = "\n=divider=\n".join(ad_parts)
             else:
+                print(f"Skipping ad: {ad_parts[0]} as it does not match the keywords.")
                 continue
         NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         return NewVariable
