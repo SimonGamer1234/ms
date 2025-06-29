@@ -135,7 +135,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
         }
 
         payload = {
-            "value": NewVariable
+            "value": Ad
         }
 
         response = requests.patch(url, headers=headers, json=payload)
