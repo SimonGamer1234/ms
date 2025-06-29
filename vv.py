@@ -168,8 +168,8 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
             if Keywords == Keywords2:
                 print(f"Editing ad: {ad_parts[0]}")
                 ad_parts[3] = str(LocalPostingsLeft)
-                ad = "\n=divider=\n".join(ad_parts)
-                SplittedAds[SplittedAds.index(ad)] = ad
+                ad1 = "\n=divider=\n".join(ad_parts)
+                SplittedAds[SplittedAds.index(ad)] = ad1
             else:
                 print(f"Skipping ad: {ad_parts[0]} as it does not match the keywords.")
                 continue
