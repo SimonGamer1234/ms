@@ -18,7 +18,8 @@ FileName = "tracker.txt"
 REPOSITORY = os.getenv("GITHUB_REPOSITORY")
 REPO_OWNER, REPO_NAME = REPOSITORY.split("/")
 print(f"REPO_OWNER: {REPO_OWNER}, REPO_NAME: {REPO_NAME}")
-BaseVariable = "Paadvertising"
+BASE_VARIABLE = os.getenv("BASE_VARIABLE")
+BASE_VARIABLE = f"{BASE_VARIABLE}\n=divider=\nBase_Variable\n=divider=\nBase_Variable\n=divider=\nBase_Variable\n=divider=\nBase_Variable\n=divider=\nBase_Variable"
 
 def GetVariableName(AD_TYPE):
     if AD_TYPE == "Normal":
@@ -187,7 +188,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
                 print("Error: No ad content found in the provided string.")
                 exit(1)
             if ad_parts[4] == Keywords:
-                ad = BaseVariable
+                ad = BASE_VARIABLE
         Variable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         return Variable
     NewPostingsLeft = int(PostingsLeft) - 1
@@ -284,10 +285,14 @@ def main():
     Token = GetToken(AdNumber)
     Content, Variation, TotalPosts, PostingsLeft, Keywords, ChannelID = SetContent(CurrentAd)
     unauthorized, Errors = Posting(URLS, Content, Token)
-    EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
-    Postings = SetVauesByVariation(Variation)
-    MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
-    ReportTicketStatus = ReportTicket(ChannelID, unauthorized, Postings, PostingsLeft)
+    if Variation == "Base_Variable":
+        MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
+        ReportTicketStatus = ReportTicket(1387532585462272120, unauthorized, "Base", "Base")
+    else:
+        EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
+        Postings = SetVauesByVariation(Variation)
+        MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
+        ReportTicketStatus = ReportTicket(ChannelID, unauthorized, Postings, PostingsLeft)
     if MessageStatus == 200 and ReportTicketStatus == 200:
         print("All messages posted successfully.")
     else:

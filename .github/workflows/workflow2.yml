@@ -45,6 +45,7 @@ jobs:
           G_TOKEN: ${{ secrets.G_TOKEN }}
           ADS: ${{ vars.NORMAL_ADS }}
           URLS: ${{ vars.NORMAL_URLS }}
+          BASE_VARIABLE: ${{ vars.BASE_VARIABLE }}
           AD_TYPE: Aviation
         run: |
           python3 vv.py
