@@ -284,7 +284,8 @@ def ReportTicket(Removed, TicketID, unauthorized, PostingsTotal, PostingsLeft):
     else:
         if Removed == 1:
             ReportContent = "We have finished posting your ad. <@1148657062599983237>"
-        ReportContent = f"We have posted your ad. The posting was successful.  {PostingsLeft} / {PostingsTotal}"
+        else:
+            ReportContent = f"We have posted your ad. The posting was successful.  {PostingsLeft} / {PostingsTotal}"
     MessageStatus = SendMessageFromBot(BOT_TOKEN, TicketID, ReportContent)
     return MessageStatus
     
