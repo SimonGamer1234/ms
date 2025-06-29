@@ -124,8 +124,6 @@ def SetContent(Ad):
 def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName):
 
     def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
-        SplittedAds[AdNumber] = Ad
-        NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/variables/{VariableName}"
         print(url)
         headers = {
@@ -194,31 +192,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
         UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
 
 
-def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
-    SplittedAds[AdNumber] = Ad
-    NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
-    url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/variables/{VariableName}"
-    headers = {
-    "Authorization": f"Bearer {G_TOKEN}",
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28"
-    }
 
-    payload = {
-        "value": NewVariable
-    }
-
-    response = requests.patch(url, headers=headers, json=payload)
-
-    # Results
-    if response.status_code == 204:
-        print("✅ Variable updated successfully.")
-    elif response.status_code == 404:
-        print("❌ Variable not found. You may need to create it first.")
-        print(response.text)
-    else:
-        print(f"❌ Failed to update variable. Status code: {response.status_code}")
-        print(response.text)
         
 def SendMessageFromAccount(Token, ChannelID, Content):
     Errors = []
