@@ -151,14 +151,46 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
             print(f"❌ Failed to update variable. Status code: {response.status_code}")
             print(response.text)
 
-            
+    def EditAllPostings(SplittedAds, PostingsLeft, Keywords):
+        for ad in SplittedAds:
+            ad_parts1 = ad.split("\n=divider=\n")
+            ad_parts2 = ad.split("\r\n=divider=\r\n")
+            if len(ad_parts1) > 1:
+                ad_parts = ad_parts1
+            elif len(ad_parts2) > 1:
+                ad_parts = ad_parts2
+            else:
+                print("Error: No ad content found in the provided string.")
+                exit(1)
+            Keywords2 = ad_parts[4]
+            if Keywords == Keywords2:
+                ad_parts[3] = str(PostingsLeft)
+                ad = "\n=divider=\n".join(ad_parts)
+            else:
+                continue
+        NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
+        return NewVariable
+    def RemoveAds(SplittedAds, Keywords):
+        for ad in SplittedAds:
+            ad_parts1 = ad.split("\n=divider=\n")
+            ad_parts2 = ad.split("\r\n=divider=\r\n")
+            if len(ad_parts1) > 1:
+                ad_parts = ad_parts1
+            elif len(ad_parts2) > 1:
+                ad_parts = ad_parts2
+            else:
+                print("Error: No ad content found in the provided string.")
+                exit(1)
+            if ad_parts[4] == Keywords:
+                ad = BaseVariable
+        Variable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
+        return Variable
     NewPostingsLeft = int(PostingsLeft) - 1
-    print(f"New Postings Left: {NewPostingsLeft}")
     if  NewPostingsLeft > 0:
-        Variable = f"{Content}\n=divider=\n{TotalPosts}\n=divider=\n{NewPostingsLeft}\n=divider=\n{Keywords}\n=divider=\n{ChannelID}"
+        Variable = EditAllPostings(SplittedAds, NewPostingsLeft, Keywords)
         UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
     elif NewPostingsLeft == 0:
-        Variable = BaseVariable
+        Variable = RemoveAds(SplittedAds, Keywords)
         UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
 
 
