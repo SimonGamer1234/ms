@@ -43,8 +43,8 @@ jobs:
           ACCOUNT4: ${{ secrets.ACCOUNT_4_TOKEN }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           G_TOKEN: ${{ secrets.G_TOKEN }}
-          ADS: ${{ vars.NORMAL_ADS }}
-          URLS: ${{ vars.NORMAL_URLS }}
+          ADS: ${{ vars.AVIATION_ADS }}
+          URLS: ${{ vars.AVIATION_URLS }}
           BASE_VARIABLE: ${{ vars.BASE_VARIABLE }}
           AD_TYPE: Aviation
         run: |
