@@ -37,10 +37,9 @@ jobs:
 
       - name: Run ad posting script
         env:
-          ACCOUNT1: ${{ secrets.ACCOUNT_1_TOKEN }}
-          ACCOUNT2: ${{ secrets.ACCOUNT_2_TOKEN }}
-          ACCOUNT3: ${{ secrets.ACCOUNT_3_TOKEN }}
-          ACCOUNT4: ${{ secrets.ACCOUNT_4_TOKEN }}
+          ACCOUNT1: ${{ secrets.ACCOUNT_3_TOKEN }}
+          ACCOUNT2: ${{ secrets.ACCOUNT_4_TOKEN }}
+          ACCOUNT3: ${{ secrets.ACCOUNT_5_TOKEN }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           G_TOKEN: ${{ secrets.G_TOKEN }}
           ADS: ${{ vars.AVIATION_ADS }}
