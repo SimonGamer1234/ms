@@ -20,6 +20,7 @@ REPO_OWNER, REPO_NAME = REPOSITORY.split("/")
 print(f"REPO_OWNER: {REPO_OWNER}, REPO_NAME: {REPO_NAME}")
 BASE_VARIABLE = os.getenv("BASE_VARIABLE")
 BASE_VARIABLE = f"{BASE_VARIABLE}\n=divider=\nBase_Variable\n=divider=\nBase_Variable\n=divider=\nBase_Variable\n=divider=\nBase_Variable\n=divider=\nBase_Variable"
+Errors = []
 
 def GetVariableName(AD_TYPE):
     if AD_TYPE == "Normal":
@@ -212,7 +213,6 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
 
         
 def SendMessageFromAccount(Token, ChannelID, Content):
-    Errors = []
     token_index = [TOKEN1, TOKEN2, TOKEN3, TOKEN4].index(Token)
     header = {"Authorization": Token}
     payload = {"content": Content}
