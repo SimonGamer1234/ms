@@ -105,7 +105,9 @@ def GetToken(AdNumber):
 
 def SetContent(Ad):
     SplittedAd1 = Ad.split("\n=divider=\n")
+    print(SplittedAd1)
     SplittedAd2 = Ad.split("\r\n=divider=\r\n")
+    print(SplittedAd2)
     if len(SplittedAd1) > 1:
         content = SplittedAd1[0]
         variation = SplittedAd1[1]
