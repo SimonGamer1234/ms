@@ -1,7 +1,7 @@
 name: Posting Normal
 on:
   schedule:
-    - cron: '0 */2 * * *' # Every 2 hours
+    - cron: '0 1-23/2 * * *' # Every 2 hours starting from 01:00
   workflow_dispatch:
 
 jobs:
