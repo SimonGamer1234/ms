@@ -125,9 +125,9 @@ def SetContent(Ad):
     else:
         print("Error: No ad content found in the provided string.")
     return content, variation, total_posts, postings, keywords, channel_ID
-def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName):
+def EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName): # Edits the postings left for the ad, and updates the variable in Github Actions.
 
-    def UpdateAdVariable(SplittedAds, VariableName, AdNumber, Ad):
+    def UpdateAdVariable(VariableName, Ad): # Updates the whole variable in Github Actions
         print(f"Updating variable {Ad}")
         url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/variables/{VariableName}"
         print(url)
@@ -154,7 +154,7 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
             print(f"❌ Failed to update variable. Status code: {response.status_code}")
             print(response.text)
 
-    def EditAllPostings(SplittedAds, LocalPostingsLeft, Keywords):
+    def EditAllPostings(SplittedAds, LocalPostingsLeft, Keywords): # Edits postings for all the ads, by searching for same keywords.
         print(f"Editing all postings with {LocalPostingsLeft} left for keywords: {Keywords}")
         print(f"Total ads to edit: {len(SplittedAds)}")
         print(SplittedAds)
@@ -179,7 +179,8 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
                 continue
         NewVariable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         return NewVariable
-    def RemoveAds(SplittedAds, Keywords):
+    
+    def RemoveAds(SplittedAds, Keywords): # Removes ads with the same keywords, if the postings left is 0.
         for ad in SplittedAds:
             ad_parts1 = ad.split("\n=divider=\n")
             ad_parts2 = ad.split("\r\n=divider=\r\n")
@@ -195,21 +196,22 @@ def EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdN
                 SplittedAds[SplittedAds.index(ad)] = ad1
         Variable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
         return Variable
-    def SendReport(ChannelID):
-        Text = "We finished posting your ad. <@1148657062599983237>"
-        Response = SendMessageFromBot(BOT_TOKEN, ChannelID, Text)
-        return Response
-    NewPostingsLeft = int(PostingsLeft) - 1
-    if  NewPostingsLeft > 0:
-        Removed = 0
-        Variable = EditAllPostings(SplittedAds, NewPostingsLeft, Keywords)
-        UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
-        return Removed
-    elif NewPostingsLeft == 0:
-        Variable = RemoveAds(SplittedAds, Keywords)
-        Removed = 1      
-        UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
-        return Removed
+    
+    def main(): # Main function to edit the postings left for the ad, based on the postings left.
+        NewPostingsLeft = int(PostingsLeft) - 1
+        if  NewPostingsLeft > 0:
+            Removed = 0
+            Variable = EditAllPostings(SplittedAds, NewPostingsLeft, Keywords)
+            UpdateAdVariable(VariableName, Variable)
+            return Removed
+        elif NewPostingsLeft == 0:
+            Variable = RemoveAds(SplittedAds, Keywords)
+            Removed = 1      
+            UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
+            return Removed
+    
+    Removed = main()
+    return Removed
 
 
 
@@ -224,7 +226,7 @@ def SendMessageFromAccount(Token, ChannelID, Content):
         print(f"Posted to {link} : {res.status_code}")  # Print response status
         print(res.text)
         if res.status_code != 200:
-            Errors.append((link, res.status_code, token_index, "Normal"))
+            Errors.append((link, res.status_code, token_index, AD_TYPE))
         return res.status_code, Errors
     except requests.RequestException as e:
         print(f"Error posting to {link}: {e}")
@@ -239,7 +241,7 @@ def SendMessageFromBot(BotToken, ChannelID, Content):
         print(f"Posted to {link} : {res.status_code}")  # Print response status
         if res.status_code != 200:
             print(f"Error posting to {link}: {res.status_code} with Bot")
-        return res.status_code
+        return res.status_code, res.text
     except requests.RequestException as e:
         print(f"Error posting to {link}: {e}")
         return None
@@ -259,11 +261,11 @@ def Posting(Ids, Content, Token):
 def ReportMainChannel(unauthorized, Content, Errors, Token):
     token_index = [TOKEN1, TOKEN2, TOKEN3, TOKEN4].index(Token)
     if unauthorized == 1:
-        ReportContent = f"TOKEN {token_index} UNAUTHORIZED - Normal - <@1148657062599983237>\n\nContent: {Content}"
+        ReportContent = f"TOKEN {token_index} UNAUTHORIZED - {AD_TYPE} - <@1148657062599983237>\n\nContent: {Content}"
     else:
         ReportContent = f" {str(Errors)}\n\nContent: {Content}"
-    MessageStatus = SendMessageFromBot(BOT_TOKEN, "1300080115945836696", ReportContent)
-    return MessageStatus
+    MessageStatus, MessageText = SendMessageFromBot(BOT_TOKEN, "1300080115945836696", ReportContent)
+    return MessageStatus, MessageText
     
 def SetVauesByVariation(Variation):
     if Variation == "Free":
@@ -300,19 +302,19 @@ def main():
     Content, Variation, TotalPosts, PostingsLeft, Keywords, ChannelID = SetContent(CurrentAd)
     unauthorized, Errors = Posting(URLS, Content, Token)
     if Variation == "Base_Variable":
-        MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
+        MessageStatus, MessageText = ReportMainChannel(unauthorized, Content, Errors, Token)
         ReportTicketStatus = ReportTicket(0, 1387532585462272120, unauthorized, "Base", "Base")
     else:
-        Removed = EditPostingsLeft(Content, TotalPosts, PostingsLeft, Keywords, ChannelID, AdNumber, SplittedAds, VariableName)
+        Removed = EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName)
         Postings = SetVauesByVariation(Variation)
-        MessageStatus = ReportMainChannel(unauthorized, Content, Errors, Token)
+        MessageStatus, MessageText = ReportMainChannel(unauthorized, Content, Errors, Token)
         ReportTicketStatus = ReportTicket(Removed, ChannelID, unauthorized, Postings, PostingsLeft)
     if MessageStatus == 200 and ReportTicketStatus == 200:
         print("All messages posted successfully.")
     else:
         print("There was an error posting some messages.")
         if MessageStatus != 200:
-            print(f"Main channel report failed with status code: {MessageStatus}")
+            print(f"Main channel report failed with status code: {MessageStatus, MessageText}")
         if ReportTicketStatus != 200:
             print(f"Ticket report failed with status code: {ReportTicketStatus}")
 
