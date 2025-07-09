@@ -207,7 +207,7 @@ def EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName
         elif NewPostingsLeft == 0:
             Variable = RemoveAds(SplittedAds, Keywords)
             Removed = 1      
-            UpdateAdVariable(SplittedAds, VariableName, AdNumber, Variable)
+            UpdateAdVariable(VariableName,Variable)
             return Removed
     
     Removed = main()
