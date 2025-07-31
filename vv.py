@@ -124,6 +124,7 @@ def SetContent(Ad):
         channel_ID = SplittedAd2[5]
     else:
         print("Error: No ad content found in the provided string.")
+    print(f"Content: {content}, Variation: {variation}, Total Posts: {total_posts}, Postings Left: {postings}, Keywords: {keywords}, Channel ID: {channel_ID}")
     return content, variation, total_posts, postings, keywords, channel_ID
 def EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName): # Edits the postings left for the ad, and updates the variable in Github Actions.
 
