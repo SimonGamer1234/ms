@@ -41,11 +41,13 @@ jobs:
           ACCOUNT2: ${{ secrets.ACCOUNT_4_TOKEN }}
           ACCOUNT3: ${{ secrets.ACCOUNT_5_TOKEN }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          NOTIONKEY: ${{ secrets.NOTIONKEY }}
           G_TOKEN: ${{ secrets.G_TOKEN }}
           ADS: ${{ vars.AVIATION_ADS }}
           URLS: ${{ vars.AVIATION_URLS }}
           BASE_VARIABLE: ${{ vars.BASE_VARIABLE }}
           AD_TYPE: Aviation
+          DatabaseID: 2420bcea8f408061b407fcb54a297b27
         run: |
           python3 vv.py
 

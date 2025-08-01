@@ -10,7 +10,9 @@ TOKEN2 = os.getenv("ACCOUNT2")
 TOKEN3 = os.getenv("ACCOUNT3")
 TOKEN4 = os.getenv("ACCOUNT4")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+NOTIONKEY = os.getenv("NOTIONKEY")
 G_TOKEN = os.getenv("G_TOKEN")
+DatabaseID = os.getenv("DatabaseID")
 ADS = os.getenv("ADS")
 URLS = os.getenv("URLS").split(",")
 AD_TYPE = os.getenv("AD_TYPE")
@@ -87,11 +89,13 @@ def GetCurrentAd(AdNumber):
   SplittedAds1 = ADS.split("\n\n++SPLITTER++\n\n")
   SplittedAds2 = ADS.split("\r\n\r\n++SPLITTER++\r\n\r\n")
   if len(SplittedAds1) > 1:
-      return SplittedAds1, SplittedAds1[AdNumber]
+    print("SplittedAds1:", SplittedAds1)
+    return SplittedAds1, SplittedAds1[AdNumber]  
   elif len(SplittedAds2) > 1:
-      return SplittedAds2, SplittedAds2[AdNumber]
+    print("SplittedAds2:", SplittedAds2)
+    return SplittedAds2, SplittedAds2[AdNumber]
   else:
-      print("Error: No ads found in the provided string.")
+    print("Error: No ads found in the provided string.")
   
 def GetToken(AdNumber):
     if AD_TYPE == "Normal":
@@ -182,6 +186,7 @@ def EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName
         return NewVariable
     
     def RemoveAds(SplittedAds, Keywords): # Removes ads with the same keywords, if the postings left is 0.
+        removing = []
         for ad in SplittedAds:
             ad_parts1 = ad.split("\n=divider=\n")
             ad_parts2 = ad.split("\r\n=divider=\r\n")
@@ -193,26 +198,29 @@ def EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName
                 print("Error: No ad content found in the provided string.")
                 exit(1)
             if ad_parts[4] == Keywords:
+                ad_position = SplittedAds.index(ad)
+                removing.append(ad_position)
                 ad1 = BASE_VARIABLE
                 SplittedAds[SplittedAds.index(ad)] = ad1
         Variable = "\n\n++SPLITTER++\n\n".join(SplittedAds)
-        return Variable
+        return Variable, removing
     
     def main(): # Main function to edit the postings left for the ad, based on the postings left.
         NewPostingsLeft = int(PostingsLeft) - 1
+        print(f"New postings left: {NewPostingsLeft}")
         if  NewPostingsLeft > 0:
             Removed = 0
             Variable = EditAllPostings(SplittedAds, NewPostingsLeft, Keywords)
             UpdateAdVariable(VariableName, Variable)
-            return Removed
+            return Removed, None
         elif NewPostingsLeft == 0:
-            Variable = RemoveAds(SplittedAds, Keywords)
+            Variable, removing = RemoveAds(SplittedAds, Keywords)
             Removed = 1      
             UpdateAdVariable(VariableName,Variable)
-            return Removed
+            return Removed,removing
     
-    Removed = main()
-    return Removed
+    Removed, removing = main()
+    return Removed, removing
 
 
 
@@ -294,6 +302,55 @@ def ReportTicket(Removed, TicketID, unauthorized, PostingsTotal, PostingsLeft):
     MessageStatus = SendMessageFromBot(BOT_TOKEN, TicketID, ReportContent)
     return MessageStatus
     
+def EditNotionMenu(Keywords, WhichVar, DatabaseID):
+    WhichVar = WhichVar.split(",")
+    for Var in WhichVar:
+        Var = int(Var.strip())
+        headers = {
+            'Authorization': f"Bearer {NOTIONKEY}",
+            'Notion-Version': '2022-06-28',
+            'Content-Type': 'application/json',
+        }
+
+        json = {
+            "sorts": [
+            {
+                "property": "Name",
+                "direction": "ascending"
+            }, 
+            ],
+        }
+        response1 = requests.post(
+            f'https://api.notion.com/v1/databases/{DatabaseID}/query',
+            headers=headers, json=json
+        )
+
+        data = response1.json()
+        results = data.get('results', [])
+        object = results[Var-1]
+        properties = object.get('properties', {})
+        newname = f"{Var} | {Keywords}"
+        properties['Name']['title'][0]['text']['content'] = newname
+
+        # Update the object with the new name
+        update_url = f"https://api.notion.com/v1/pages/{object['id']}"
+        json = {
+            'properties': {
+                'Name': {
+                    'title': [
+                        {
+                            'text': {
+                                'content': newname
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        response2 = requests.patch(update_url, headers=headers, json=json)
+        if not response2.status_code or not response1.status_code == 200:
+            print("PROBLEM WITH NOTION")
+            print(response2.status_code, response1.status_code)
 
 def main():
     VariableName = GetVariableName(AD_TYPE)
@@ -306,10 +363,12 @@ def main():
         MessageStatus, MessageText = ReportMainChannel(unauthorized, Content, Errors, Token)
         ReportTicketStatus = ReportTicket(0, 1387532585462272120, unauthorized, "Base", "Base")
     else:
-        Removed = EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName)
+        Removed, removing = EditPostingsLeft(PostingsLeft, Keywords, AdNumber, SplittedAds, VariableName)
         Postings = SetVauesByVariation(Variation)
         MessageStatus, MessageText = ReportMainChannel(unauthorized, Content, Errors, Token)
         ReportTicketStatus = ReportTicket(Removed, ChannelID, unauthorized, Postings, PostingsLeft)
+        if Removed == 1:
+            EditNotionMenu("Base Variable (free space)", removing, DatabaseID)
     if MessageStatus == 200 and ReportTicketStatus == 200:
         print("All messages posted successfully.")
     else:
