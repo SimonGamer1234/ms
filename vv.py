@@ -303,8 +303,7 @@ def ReportTicket(Removed, TicketID, unauthorized, PostingsTotal, PostingsLeft):
     return MessageStatus
     
 def EditNotionMenu(Keywords, WhichVar, DatabaseID):
-    WhichVar1 = WhichVar.split(",")
-    for Var in WhichVar1:
+    for Var in WhichVar:
         Var = int(Var.strip())
         headers = {
             'Authorization': f"Bearer {NOTIONKEY}",
