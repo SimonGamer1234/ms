@@ -88,10 +88,10 @@ def ge_current_ad_number(AD_TYPE):
 def GetCurrentAd(AdNumber):
   SplittedAds1 = ADS.split("\n\n++SPLITTER++\n\n")
   SplittedAds2 = ADS.split("\r\n\r\n++SPLITTER++\r\n\r\n")
-  if len(SplittedAds1) > 1:
+  if len(SplittedAds1) == 9:
     print("SplittedAds1:", SplittedAds1)
     return SplittedAds1, SplittedAds1[AdNumber]  
-  elif len(SplittedAds2) > 1:
+  elif len(SplittedAds2) == 9:
     print("SplittedAds2:", SplittedAds2)
     return SplittedAds2, SplittedAds2[AdNumber]
   else:
