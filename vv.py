@@ -285,7 +285,7 @@ def SetVauesByVariation(Variation):
         Postings = 21
     elif Variation == "Pro":
         Postings = 28
-    elif Variation == "God's": 
+    elif Variation == "God": 
         Postings = 42
     else:
         print("Something went wrong with Variation")    
